@@ -1,538 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ADMIN PANEL | MAGIC SCRIPTS</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="https://i.ibb.co/xqXhx24Z/MS.png" type="image/x-icon">
-
-    <!-- ICONS -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="icon" href="https://i.ibb.co/xqXhx24Z/MS.png" type="image/png" />
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            margin: 0;
-            padding: 20px;
+        :root { 
+            --accent:#22c55e; --blue:#2563eb; --red:#ef4444; 
+            --bg:#020617; --card:#0f172a; --text:#ffffff; --border:#1e293b; --input-bg:#020617;
         }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
+        body.light-mode { 
+            --bg:#f1f5f9; --card:#ffffff; --text:#000000; --border:#cbd5e1; --input-bg:#f8fafc;
         }
+        body { background:var(--bg); color:var(--text); font-family:'Segoe UI',sans-serif; display:flex; justify-content:center; padding:20px; transition:0.3s;}
+        
+        .box { background:var(--card); padding:30px; border-radius:30px; width:450px; border:1px solid var(--border); box-shadow:0 20px 40px rgba(0,0,0,0.2); position:relative;}
+        
+        .header-section { position:relative; text-align:center; margin-bottom:25px; padding-top:10px;}
+        .logo-img { width:100px; height:100px; border-radius:50%; animation:zoomInOut 4s infinite; border:3px solid var(--blue);}
+        @keyframes zoomInOut {0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+        
+        .theme-toggle { position:absolute; top:0; right:0; cursor:pointer; width:30px; height:30px; transition: 0.3s; z-index: 15;}
+        
+        .input-group { margin: 8px 0; position: relative; }
+        input { width:100%; padding:14px; border-radius:12px; border:1px solid var(--border); background:var(--input-bg); color:var(--accent); font-weight: bold; outline: none; box-sizing: border-box; transition: 0.3s; margin-bottom: 10px;}
+        input::placeholder { color: #555; font-weight: normal; }
+        
+        input.error-border { border-color: var(--red) !important; }
+        .error-msg { color: var(--red); font-size: 12px; margin-top: -5px; margin-bottom: 10px; display: none; font-weight: 500; }
 
-        .transaction {
-            background: #fff;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            animation: fade .3s ease;
+        .btn { display: flex; align-items: center; justify-content: center; gap: 10px; background:var(--blue); color:white; border:none; width:100%; padding:15px; border-radius:12px; cursor:pointer; font-weight:bold; margin-top:12px;}
+
+        .logout-btn { position:absolute; top:15px; left:15px; background:var(--red); color:white; border:none; padding:8px 15px; border-radius:8px; cursor:pointer; font-size:11px; font-weight:bold; display: flex; align-items: center; gap: 5px; z-index: 10;}
+        
+        .search-container { position: relative; margin-top:20px;}
+        .search-container input { padding-left: 45px; border-color: var(--blue); }
+        .search-main-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; }
+
+        .user-card { background:rgba(120,120,120,0.1); padding:15px; border-radius:15px; margin-top:12px; display:flex; justify-content:space-between; align-items:center; border-left:5px solid var(--blue);}
+        .del-btn { background:var(--red); border:none; color:white; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:11px; font-weight:bold; display: flex; align-items: center; gap: 5px;}
+
+        #toast { 
+            visibility:hidden; position:fixed; bottom:30px; left:50%; transform:translateX(-50%); 
+            background:var(--blue); color:white; padding:12px 25px; border-radius:50px; 
+            font-weight:bold; z-index:100; display: flex; align-items: center; gap: 10px;
         }
-
-        @keyframes fade {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0px);
-            }
-        }
-
-        .row {
-            display: flex;
-            flex-wrap: wrap;
-            margin-bottom: 8px;
-        }
-
-        .label {
-            width: 160px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .value {
-            flex: 1;
-            color: #555;
-            word-break: break-word;
-            width: 100%;
-        }
-
-        .row.stack {
-            flex-direction: column;
-        }
-
-        .row.stack .label {
-            width: 100%;
-            margin-bottom: 4px;
-        }
-
-        .row.stack .value {
-            width: 100%;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100vw;
-            max-width: 100%;
-            box-sizing: border-box;
-            padding: 8px 6px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .vid-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 6px;
-            width: 100%;
-            animation: fade .2s ease;
-        }
-
-        .vid-row input[name="eid[]"] {
-            width: 100%;
-        }
-
-        .vid-row input[name="name[]"] {
-            width: 90px;
-            max-width: 120px;
-        }
-
-        .vid-btn {
-            border: none;
-            background: #f0f0f0;
-            cursor: pointer;
-            font-size: 14px;
-            padding: 9px 10px;
-            border-radius: 4px;
-            min-width: 45px;
-        }
-
-        .vid-btn.add {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .vid-btn.remove {
-            background: #fdecea;
-            color: #c62828;
-        }
-
-        .save-btn {
-            border: none;
-            background: #111;
-            color: #fff;
-            padding: 10px 18px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        .logout-btn {
-            border: none;
-            background: #ffebee;
-            color: #c62828;
-            padding: 10px 18px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        .top-title {
-            font-size: 2rem;
-            font-weight: 900;
-            color: #000;
-            text-shadow: 0 5px 25px rgba(0, 0, 0, 0.35);
-            letter-spacing: 1px;
-            text-align: center;
-        }
-
-        .sub-title {
-            font-size: 1rem;
-            color: #5a5a5a;
-            letter-spacing: 1px;
-            text-align: center;
-            margin-bottom: 1rem;
-            font-weight: 900;
-        }
-
-        #loginPage {
-            max-width: 400px;
-            margin: auto;
-            margin-top: 70px;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #111;
-            color: #fff;
-            padding: 12px 18px;
-            border-radius: 6px;
-            z-index: 9999;
-            display: none;
-        }
-
-        .top-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        @media(max-width:600px) {
-            body {
-                padding: 12px;
-            }
-
-            .transaction {
-                padding: 15px;
-            }
-
-            .vid-row {
-                flex-wrap: nowrap;
-            }
-        }
+        #toast.show { visibility:visible; animation: pop 0.3s ease; }
+        @keyframes pop { from {bottom: 0; opacity:0;} to {bottom: 30px; opacity:1;} }
+        
+        .hidden { display:none !important; }
     </style>
 </head>
-
 <body>
 
-    <div id="toast" class="toast"></div>
+<div id="toast">
+    <span id="toastText">Done!</span>
+    <img src="remove.png" id="toastIcon" style="display:none; width:20px;">
+</div>
 
-    <!-- LOGIN PAGE -->
-
-    <div id="loginPage" style="display:none;">
-
-        <div class="top-title">
-            MAGIC SCRIPTS
-        </div>
-
-        <div class="sub-title">
-            (ADMIN LOGIN)
-        </div>
-
-        <div class="transaction">
-
-            <div class="row stack">
-                <div class="label">Email</div>
-
-                <div class="value">
-                    <input type="email" id="email" placeholder="Enter Email">
-                </div>
-            </div>
-
-            <div class="row stack">
-                <div class="label">Password</div>
-
-                <div class="value">
-                    <input type="password" id="password" placeholder="Enter Password">
-                </div>
-            </div>
-
-            <div style="margin-top:20px;">
-                <button class="save-btn" onclick="login()">
-                    <i class="fa-solid fa-lock"></i>
-                    Login
-                </button>
-            </div>
-
-        </div>
+<div id="loginBox" class="box hidden">
+    <div class="header-section">
+        <img src="sun.png" id="themeIconLogin" class="theme-toggle" onclick="toggleTheme()">
+        <img src="https://i.ibb.co/xqXhx24Z/MS.png" class="logo-img">
+    </div>
+    <h2 style="text-align:center; margin:0; margin-bottom: 10px;">Admin Login</h2>
+    
+    <div class="input-group">
+        <input type="password" id="pass" placeholder="Enter Password" oninput="resetError()">
+        <div id="loginError" class="error-msg">Please enter a password!</div>
     </div>
 
-    <!-- MAIN PAGE -->
+    <button class="btn" onclick="login()">
+        <img src="login.png" style="width:20px;"> Login
+    </button>
+</div>
 
-    <div id="mainPage" style="display:none;">
-
-        <div class="top-title">
-            MAGIC SCRIPTS
-        </div>
-
-        <div class="sub-title">
-            (MAGIC SCRIPTS ADMIN PANEL)
-        </div>
-
-        <form class="transaction">
-
-            <!-- TOP BUTTONS -->
-
-            <div class="top-buttons">
-
-                <!-- LOGOUT LEFT -->
-
-                <button type="button" class="logout-btn" onclick="logout()">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    Logout
-                </button>
-
-                <!-- ADD RIGHT -->
-
-                <button type="button" class="vid-btn add" onclick="addVid()">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-
-            </div>
-
-            <!-- USERS -->
-
-            <div class="row stack">
-
-                <div class="label">EID(s)</div>
-
-                <div class="value" id="usersContainer">
-
-                </div>
-
-            </div>
-
-            <!-- SAVE -->
-
-            <div style="margin-top:20px;">
-
-                <button type="button" class="save-btn" onclick="saveAll()">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    Save Changes
-                </button>
-
-            </div>
-
-        </form>
-
+<div id="panelBox" class="box hidden">
+    <button class="logout-btn" onclick="logout()">
+        <img src="logout.png" style="width:14px;"> LOGOUT
+    </button>
+    
+    <div class="header-section">
+        <img src="sun.png" id="themeIconPanel" class="theme-toggle" onclick="toggleTheme()">
+        <img src="https://i.ibb.co/xqXhx24Z/MS.png" class="logo-img">
+        <h3 style="margin:10px 0 0; color:var(--blue); text-transform: uppercase;">Magic Scripts Admin</h3>
     </div>
 
-    <script type="module">
+    <input type="text" id="admin_n" placeholder="Admin Side User Name" style="border-color: var(--blue);">
+    <input type="text" id="n" placeholder="User Name">
+    <input type="text" id="i" placeholder="20-Digit Device ID">
+    <input type="text" id="trader_id" placeholder="User Trader ID (Quotex)">
+    <input type="email" id="e" placeholder="User Email">
 
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    <button class="btn" onclick="add()">
+        <img src="upgrade.png" style="width:20px;"> UPGRADE MAGIC 🪄 
+    </button>
 
-        import {
-            getAuth,
-            signInWithEmailAndPassword,
-            onAuthStateChanged,
-            signOut
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    <div class="search-container">
+        <img src="search.png" id="searchIcon" class="search-main-icon">
+        <input type="text" id="s" placeholder="Search User" onkeyup="search()">
+    </div>
+    
+    <div id="list" style="max-height:300px; overflow-y:auto; margin-top:10px;"></div>
+</div>
 
-        import {
-            getDatabase,
-            ref,
-            get,
-            set,
-            remove
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDBdVcyIj9IunVpgYczg4AJsw-PzG49hUg",
-            authDomain: "ahmad-admin-panel.firebaseapp.com",
-            databaseURL: "https://ahmad-admin-panel-default-rtdb.firebaseio.com",
-            projectId: "ahmad-admin-panel",
-            storageBucket: "ahmad-admin-panel.firebasestorage.app",
-            messagingSenderId: "670852174350",
-            appId: "1:670852174350:web:0c60c614cc58ed24a5a25f"
-        };
+<script>
+const firebaseConfig = { 
+    apiKey:"AIzaSyDBdVcyIj9IunVpgYczg4AJsw-PzG49hUg",
+    authDomain:"ahmad-admin-panel.firebaseapp.com",
+    projectId:"ahmad-admin-panel",
+    databaseURL:"ahmad-admin-panel-default-rtdb.firebaseio.com"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const auth = firebase.auth();
 
-        const app = initializeApp(firebaseConfig);
+function applyTheme(theme) {
+    const themeIcon = (theme === 'light') ? 'moon.png' : 'sun.png';
+    const searchIcon = (theme === 'light') ? 'search1.png' : 'search.png';
+    if(theme === 'light') document.body.classList.add('light-mode');
+    else document.body.classList.remove('light-mode');
+    document.getElementById('themeIconLogin').src = themeIcon;
+    document.getElementById('themeIconPanel').src = themeIcon;
+    document.getElementById('searchIcon').src = searchIcon;
+}
 
-        const auth = getAuth(app);
+function toggleTheme() {
+    let current = localStorage.getItem('theme') || 'dark';
+    let newTheme = (current === 'dark') ? 'light' : 'dark';
+    localStorage.setItem('theme', newTheme);
+    applyTheme(newTheme);
+}
 
-        const db = getDatabase(app);
+function showToast(m, showIcon = false){
+    let t = document.getElementById('toast');
+    document.getElementById('toastText').innerText = m;
+    document.getElementById('toastIcon').style.display = showIcon ? "block" : "none";
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+}
 
-        const loginPage = document.getElementById("loginPage");
+function login(){
+    let email="ahmad.bhai.scripts@gmail.com"; 
+    let passInput = document.getElementById('pass');
+    let errorMsg = document.getElementById('loginError');
+    let passValue = passInput.value;
+    if(!passValue) {
+        passInput.classList.add('error-border');
+        errorMsg.style.display = "block";
+        return;
+    }
+    auth.signInWithEmailAndPassword(email, passValue).catch(() => showToast("Wrong Password"));
+}
 
-        const mainPage = document.getElementById("mainPage");
+function resetError() {
+    let passInput = document.getElementById('pass');
+    let errorMsg = document.getElementById('loginError');
+    passInput.classList.remove('error-border');
+    errorMsg.style.display = "none";
+}
 
-        function toast(msg) {
+function logout(){
+    auth.signOut().then(() => showToast("Logged Out"));
+}
 
-            const t = document.getElementById("toast");
+auth.onAuthStateChanged(user=>{
+    if(user){
+        document.getElementById('loginBox').classList.add('hidden');
+        document.getElementById('panelBox').classList.remove('hidden');
+        loadData();
+    } else {
+        document.getElementById('panelBox').classList.add('hidden');
+        document.getElementById('loginBox').classList.remove('hidden');
+        resetError();
+    }
+});
 
-            t.innerText = msg;
-
-            t.style.display = "block";
-
-            setTimeout(() => {
-
-                t.style.display = "none";
-
-            }, 2000);
-        }
-
-        // AUTO LOGIN
-
-        onAuthStateChanged(auth, (user) => {
-
-            if (user) {
-
-                loginPage.style.display = "none";
-
-                mainPage.style.display = "block";
-
-                loadUsers();
-
-            } else {
-
-                loginPage.style.display = "block";
-
-                mainPage.style.display = "none";
-            }
+function add(){
+    let adInput = document.getElementById('admin_n');
+    let nInput = document.getElementById('n');
+    let iInput = document.getElementById('i');
+    let tInput = document.getElementById('trader_id');
+    let eInput = document.getElementById('e');
+    
+    if(adInput.value && nInput.value && iInput.value){
+        db.ref('users').push({
+            admin_note: adInput.value,
+            name: nInput.value, 
+            id: iInput.value.replace(/\s/g, ''),          
+            trader_id: tInput.value,
+            email: eInput.value,
+            date: new Date().toLocaleDateString(),
+            status: "active"
+        }).then(()=>{
+            showToast("User Upgraded!");
+            adInput.value=""; nInput.value=""; iInput.value=""; tInput.value=""; eInput.value="";
         });
+    } else {
+        showToast("Fill in all the inputs.");
+    }
+}
 
-        // LOGIN
-
-        window.login = async function () {
-
-            const email = document.getElementById("email").value;
-
-            const password = document.getElementById("password").value;
-
-            try {
-
-                await signInWithEmailAndPassword(auth, email, password);
-
-                toast("Login Success");
-
-            } catch (e) {
-
-                toast("Login Failed");
-            }
-        }
-
-        // LOGOUT
-
-        window.logout = async function () {
-
-            await signOut(auth);
-
-            toast("Logout Success");
-        }
-
-        // ADD USER TOP
-
-        window.addVid = function () {
-
-            const container = document.getElementById("usersContainer");
-
-            const row = document.createElement("div");
-
-            row.className = "vid-row";
-
-            row.innerHTML = `
-                <input type="text" name="id[]" maxlength="20" placeholder="Enter EID">
-
-                <input type="text" name="name[]" maxlength="50" placeholder="Name">
-
-                <button type="button" class="vid-btn remove" onclick="removeVid(this)">
-                    <i class="fa-solid fa-trash"></i>
+function loadData(){
+    db.ref('users').on('value',s=>{
+        let h="";
+        s.forEach(c=>{
+            let v=c.val();
+            let searchKey = (v.admin_note || v.name).toLowerCase();
+            h+=`<div class="user-card" data-admin="${searchKey}">
+                <span>
+                    <b style="color:var(--blue); text-transform:uppercase; font-size:15px;">${v.admin_note || 'No Name'}</b><br>
+                    <b style="color:var(--text); font-size:12px;">${v.name}</b><br>
+                    <small style="opacity:0.7;">Device: ${v.id}</small><br>
+                    <small style="color:var(--accent);">Trader: ${v.trader_id || 'N/A'}</small>
+                </span>
+                <button class="del-btn" onclick="del('${c.key}', '${v.admin_note || v.name}')">
+                    <img src="delete.png" style="width:12px;"> Delete
                 </button>
-            `;
+            </div>`;
+        });
+        document.getElementById('list').innerHTML = h || "<p style='text-align:center;opacity:0.5'>Empty List</p>";
+    });
+}
 
-            // NEW INPUTS TOP
-            container.prepend(row);
-        }
+function search(){
+    let v=document.getElementById('s').value.toLowerCase();
+    document.querySelectorAll('.user-card').forEach(u => {
+        let adminAttr = u.getAttribute('data-admin');
+        u.style.display = adminAttr.includes(v) ? "flex" : "none";
+    });
+}
 
-        // REMOVE USER
+function del(k, name){
+    // Alert hata diya hai, direct delete hoga
+    db.ref('users').child(k).remove().then(()=>showToast(name + " removed!", true));
+}
 
-        window.removeVid = async function (btn) {
-
-            const row = btn.parentElement;
-
-            const eid = row.querySelector('input[name="eid[]"]').value;
-
-            row.remove();
-
-            if (eid) {
-
-                await remove(ref(db, "users/" + eid));
-
-                toast("User Removed");
-            }
-        }
-
-        // LOAD USERS
-
-        async function loadUsers() {
-
-            const container = document.getElementById("usersContainer");
-
-            container.innerHTML = "";
-
-            const snapshot = await get(ref(db, "users"));
-
-            if (!snapshot.exists()) return;
-
-            const data = snapshot.val();
-
-            const reversed = Object.keys(data).reverse();
-
-            reversed.forEach(key => {
-
-                const user = data[key];
-
-                const row = document.createElement("div");
-
-                row.className = "vid-row";
-
-                row.innerHTML = `
-                    <input type="text" 
-                    name="eid[]" 
-                    maxlength="20" 
-                    value="${user.eid || ''}">
-
-                    <input type="text" 
-                    name="name[]" 
-                    maxlength="50" 
-                    value="${user.name || ''}">
-
-                    <button type="button" 
-                    class="vid-btn remove" 
-                    onclick="removeVid(this)">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                `;
-
-                container.appendChild(row);
-            });
-        }
-
-        // SAVE
-
-        window.saveAll = async function () {
-
-            const rows = document.querySelectorAll(".vid-row");
-
-            for (const row of rows) {
-
-                const eid = row.querySelector('input[name="eid[]"]').value.trim();
-
-                const name = row.querySelector('input[name="name[]"]').value.trim();
-
-                if (!eid) continue;
-
-                await set(ref(db, "users/" + eid), {
-                    eid,
-                    name
-                });
-            }
-
-            toast("Saved Successfully");
-
-            setTimeout(() => {
-
-                location.reload();
-
-            }, 1000);
-        }
-
-    </script>
-
+window.onload = () => { applyTheme(localStorage.getItem('theme') || 'dark'); };
+</script>
 </body>
-
 </html>
