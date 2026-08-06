@@ -57,12 +57,12 @@
 
 <div id="toast">
     <span id="toastText">Done!</span>
-    <img src="https://magic-scripts-admin-panel.vercel.app/remove.png" id="toastIcon" style="display:none; width:20px;">
+    <img src="remove.png" id="toastIcon" style="display:none; width:20px;">
 </div>
 
 <div id="loginBox" class="box hidden">
     <div class="header-section">
-        <img src="https://magic-scripts-admin-panel.vercel.app/sun.png" id="themeIconLogin" class="theme-toggle" onclick="toggleTheme()">
+        <img src="sun.png" id="themeIconLogin" class="theme-toggle" onclick="toggleTheme()">
         <img src="https://magic-scripts-admin-panel.vercel.app/logo.svg" class="logo-img">
     </div>
     <h2 style="text-align:center; margin:0; margin-bottom: 10px;">Admin Login</h2>
@@ -73,17 +73,17 @@
     </div>
 
     <button class="btn" onclick="login()">
-        <img src="https://magic-scripts-admin-panel.vercel.app/login.png" style="width:20px;"> Login
+        <img src="login.png" style="width:20px;"> Login
     </button>
 </div>
 
 <div id="panelBox" class="box hidden">
-    <button class="https://magic-scripts-admin-panel.vercel.app/logout-btn" onclick="logout()">
-        <img src="https://magic-scripts-admin-panel.vercel.app/logout.png" style="width:14px;"> LOGOUT
+    <button class="logout-btn" onclick="logout()">
+        <img src="logout.png" style="width:14px;"> LOGOUT
     </button>
     
     <div class="header-section">
-        <img src="https://magic-scripts-admin-panel.vercel.app/sun.png" id="themeIconPanel" class="theme-toggle" onclick="toggleTheme()">
+        <img src="sun.png" id="themeIconPanel" class="theme-toggle" onclick="toggleTheme()">
         <img src="https://magic-scripts-admin-panel.vercel.app/logo.svg" class="logo-img">
         <h3 style="margin:10px 0 0; color:var(--blue); text-transform: uppercase;">Magic Scripts Admin</h3>
     </div>
@@ -95,7 +95,7 @@
     <input type="email" id="e" placeholder="User Email">
 
     <button class="btn" onclick="add()">
-        <img src="https://magic-scripts-admin-panel.vercel.app/upgrade.png" style="width:20px;"> UPGRADE MAGIC 🪄 
+        <img src="upgrade.png" style="width:20px;"> UPGRADE MAGIC 🪄 
     </button>
 
     <div class="search-container">
@@ -122,8 +122,8 @@ const db = firebase.database();
 const auth = firebase.auth();
 
 function applyTheme(theme) {
-    const themeIcon = (theme === 'light') ? 'https://magic-scripts-admin-panel.vercel.app/moon.png' : 'https://magic-scripts-admin-panel.vercel.app/sun.png';
-    const searchIcon = (theme === 'light') ? 'https://magic-scripts-admin-panel.vercel.app/search1.png' : 'https://magic-scripts-admin-panel.vercel.app/search.png';
+    const themeIcon = (theme === 'light') ? 'moon.png' : 'sun.png';
+    const searchIcon = (theme === 'light') ? 'search1.png' : 'search.png';
     if(theme === 'light') document.body.classList.add('light-mode');
     else document.body.classList.remove('light-mode');
     document.getElementById('themeIconLogin').src = themeIcon;
@@ -221,7 +221,7 @@ function loadData(){
                     <small style="color:var(--accent);">Trader: ${v.trader_id || 'N/A'}</small>
                 </span>
                 <button class="del-btn" onclick="del('${c.key}', '${v.admin_note || v.name}')">
-                    <img src="https://magic-scripts-admin-panel.vercel.app/delete.png" style="width:12px;"> Delete
+                    <img src="delete.png" style="width:12px;"> Delete
                 </button>
             </div>`;
         });
